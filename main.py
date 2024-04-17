@@ -3,7 +3,6 @@ from my_functions import build_person, build_experiment
 from my_classes import Person, Experiment
 import os
 
-
 # Hauptfunktion
 def main():
     # Experiment-Informationen
