@@ -1,14 +1,7 @@
 import json
 from my_functions import build_person, build_experiment
+from my_classes import Person, Experiment
 
-# Funktion zur Abfrage von Personendaten
-def ask_for_person_info(role):
-    print(f"Geben Sie die Informationen für {role} ein:")
-    first_name = input("Vorname: ")
-    last_name = input("Nachname: ")
-    sex = input("Geschlecht (male/female): ")
-    age = int(input("Alter: "))
-    return build_person(first_name, last_name, sex, age)
 
 # Hauptfunktion
 def main():
@@ -17,17 +10,31 @@ def main():
     date = input("Datum (dd.mm.yyyy): ")
 
     # Informationen zum Supervisor und Versuchsperson
-    supervisor = ask_for_person_info("Supervisor")
-    subject = ask_for_person_info("Versuchsperson")
+    print("Geben Sie die Informationen für den Supervisor ein:")
+    supervisor = Person(
+        first_name=input("Vorname: "),
+        last_name=input("Nachname: "),
+        sex=input("Geschlecht (male/female): "),
+        age=int(input("Alter: "))
+    )
 
-    # Erstellen und Drucken des Experiment-Dictionary
-    experiment = build_experiment(experiment_name, date, supervisor, subject)
+    print("Geben Sie die Informationen für die Versuchsperson ein:")
+    subject = Person(
+        first_name=input("Vorname: "),
+        last_name=input("Nachname: "),
+        sex=input("Geschlecht (male/female): "),
+        age=int(input("Alter: "))
+    )
+
+    # Erstellen des Experiment-Objekts
+    experiment = Experiment(experiment_name, date, supervisor, subject)
+
+    # Drucken der Experimentdetails
     print("\nExperiment-Details:")
-    print(experiment)
+    print(experiment.to_dict())
 
     # Speichern der Daten in einer JSON-Datei
-    with open("experiment_details.json", "w") as outfile:
-        json.dump(experiment, outfile)
+    experiment.save("experiment_details.json")
 
 if __name__ == "__main__":
     main()
