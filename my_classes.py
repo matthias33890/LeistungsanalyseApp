@@ -7,6 +7,7 @@ class Person:
         self.last_name = last_name
         self.sex = sex
         self.age = age
+        self.max_hr = self.estimate_max_hr()
         
     def estimate_max_hr(self):
         return my_functions.estimate_max_hr(self.age, self.sex)
