@@ -1,6 +1,6 @@
 import json
 from my_functions import build_person, build_experiment
-from my_classes import Person, Experiment
+from my_classes import Subject, Supervisor, Experiment
 import os
 
 # Hauptfunktion
@@ -11,19 +11,18 @@ def main():
 
     # Informationen zum Supervisor und Versuchsperson
     print("Geben Sie die Informationen für den Supervisor ein:")
-    supervisor = Person(
+    supervisor = Supervisor(
         first_name=input("Vorname: "),
         last_name=input("Nachname: "),
-        sex=input("Geschlecht (male/female): "),
-        age=int(input("Alter: "))
+        department=input("Abteilung: "),
     )
 
     print("Geben Sie die Informationen für die Versuchsperson ein:")
-    subject = Person(
+    subject = Subject(
         first_name=input("Vorname: "),
         last_name=input("Nachname: "),
         sex=input("Geschlecht (male/female): "),
-        age=int(input("Alter: "))
+        birthdate=input("Geburtsdatum (DD.MM.YYYY): ")
     )
 
     # Erstellen des Experiment-Objekts
