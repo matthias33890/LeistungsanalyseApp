@@ -1,48 +1,64 @@
+#!/usr/bin/env python
+# encoding: utf-8
 import json
-from my_functions import build_person, build_experiment
-from my_classes import Subject, Supervisor, Experiment
-import os
+from flask import Flask, request, jsonify
 
-# Hauptfunktion
-def main():
-    # Experiment-Informationen
-    experiment_name = input("Name des Experiments: ")
-    date = input("Datum (dd.mm.yyyy): ")
+app = Flask(__name__)
 
-    # Informationen zum Supervisor und Versuchsperson
-    print("Geben Sie die Informationen für den Supervisor ein:")
-    supervisor = Supervisor(
-        first_name=input("Vorname: "),
-        last_name=input("Nachname: "),
-        department=input("Abteilung: "),
-    )
+@app.route('/', methods=['GET'])
+def query_records():
+    name = request.args.get('name')
+    print(name)
+    with open('data.txt', 'r') as f:
+        data = f.read()
+        records = json.loads(data)
+        for record in records:
+            if record['name'] == name:
+                return jsonify(record)
+        return jsonify({'error': 'data not found'})
 
-    print("Geben Sie die Informationen für die Versuchsperson ein:")
-    subject = Subject(
-        first_name=input("Vorname: "),
-        last_name=input("Nachname: "),
-        sex=input("Geschlecht (male/female): "),
-        birthdate=input("Geburtsdatum (DD.MM.YYYY): ")
-    )
+@app.route('/', methods=['PUT'])
+def create_record():
+    record = json.loads(request.data)
+    with open('data.txt', 'r') as f:
+        data = f.read()
+    if not data:
+        records = [record]
+    else:
+        records = json.loads(data)
+        records.append(record)
+    with open('data.txt', 'w') as f:
+        f.write(json.dumps(records, indent=2))
+    return jsonify(record)
 
-    # Erstellen des Experiment-Objekts
-    experiment = Experiment(experiment_name, date, f"{supervisor.first_name} {supervisor.last_name}" ,f"{subject.first_name} {subject.last_name}")
-
-    # Drucken der Experimentdetails
-    print("\nExperiment-Details:")
-    print(experiment.__dict__)
-    print(supervisor.__dict__)
-    print(subject.__dict__)
-
-    # Ordner "jsons" erstellen, falls er noch nicht existiert
-    if not os.path.exists("jsons"):
-        os.makedirs("jsons")
+@app.route('/', methods=['POST'])
+def update_record():
+    record = json.loads(request.data)
+    new_records = []
+    with open('data.txt', 'r') as f:
+        data = f.read()
+        records = json.loads(data)
+    for r in records:
+        if r['name'] == record['name']:
+            r['email'] = record['email']
+        new_records.append(r)
+    with open('data.txt', 'w') as f:
+        f.write(json.dumps(new_records, indent=2))
+    return jsonify(record)
     
-    # Speichern der Daten in einer JSON-Datei
-    experiment.save("jsons/experiment_details.json")
-    supervisor.save("jsons/supervisor_details.json")
-    subject.save("jsons/subject_details.json")
+@app.route('/', methods=['DELETE'])
+def delete_record():
+    record = json.loads(request.data)
+    new_records = []
+    with open('data.txt', 'r') as f:
+        data = f.read()
+        records = json.loads(data)
+        for r in records:
+            if r['name'] == record['name']:
+                continue
+            new_records.append(r)
+    with open('data.txt', 'w') as f:
+        f.write(json.dumps(new_records, indent=2))
+    return jsonify(record)
 
-
-if __name__ == "__main__":
-    main()
+app.run(debug=True)

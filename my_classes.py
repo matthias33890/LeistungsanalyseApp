@@ -1,6 +1,11 @@
 import json
 from datetime import datetime
 import my_functions
+import requests
+import json
+
+#global attributes:
+url = "http://127.0.0.1:5000/"
 
 class Person:
     def __init__(self, first_name, last_name): #Hier brauchen wir nun nur noch Vor- und Nachnamen
@@ -11,14 +16,23 @@ class Person:
         # Save the experiment details as a JSON file
         with open(filename, "w") as outfile:
             json.dump(self.__dict__, outfile)
+    
+    def put(self):
+        data = {
+            "name": self.first_name
+        }
+        data_json = json.dumps(data)
+        response = requests.put(url, data=data_json)
+        print(response.text)
 
 class Subject(Person):
-    def __init__(self, first_name, last_name, sex, birthdate): # Beim Subjekt brauchen wir zusätzlich noch Geschlecht und Geburtsdatum
+    def __init__(self, first_name, last_name, sex, birthdate, email): # Beim Subjekt brauchen wir zusätzlich noch Geschlecht und Geburtsdatum
         super().__init__(first_name, last_name) # hier ist ein zusätzliches Attribut unnötig.
         self.sex = sex
         self.__birthdate__ = birthdate  # Hidden attribute for birthdate
         self.age = self.calculate_age()
         self.max_hr = self.estimate_max_hr()
+        self.email = email
 
     def calculate_age(self):
         today = datetime.now()
@@ -28,6 +42,15 @@ class Subject(Person):
 
     def estimate_max_hr(self):
         return my_functions.estimate_max_hr(self.age, self.sex)
+    
+    def update_email(self):
+        data = {
+            "name": self.first_name,
+            "email": self.email
+        }
+        data_json = json.dumps(data)
+        response = requests.post(url, data=data_json)
+        print(response.text)
 
 class Supervisor(Person):
     def __init__(self, first_name, last_name, department):
@@ -45,3 +68,5 @@ class Experiment:
             # Save the experiment details as a JSON file
         with open(filename, "w") as outfile:
             json.dump(self.__dict__, outfile)
+
+
