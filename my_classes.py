@@ -29,14 +29,14 @@ class Subject(Person):
     def __init__(self, first_name, last_name, sex, birthdate, email): # Beim Subjekt brauchen wir zusätzlich noch Geschlecht und Geburtsdatum
         super().__init__(first_name, last_name) # hier ist ein zusätzliches Attribut unnötig.
         self.sex = sex
-        self.__birthdate__ = birthdate  # Hidden attribute for birthdate
-        self.age = self.calculate_age()
+        self.__birthdate = birthdate  # Hidden attribute for birthdate
+        self.age = self.calculate_age(birthdate)
         self.max_hr = self.estimate_max_hr()
         self.email = email
 
-    def calculate_age(self):
+    def calculate_age(self, birthdate):
         today = datetime.now()
-        birthdate = datetime.strptime(self.__birthdate__, '%d.%m.%Y')
+        birthdate = datetime.strptime(birthdate, '%d.%m.%Y')
         age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
         return int(age)
 
